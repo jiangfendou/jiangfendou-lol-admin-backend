@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangfendou.loladmin.mapper.SysUserRoleMapper">
+
+    <update id="deleteUserRoleBatch">
+        UPDATE sys_user_role
+        SET is_deleted = 1
+        <where>
+            user_id IN 
+            <foreach collection="deleteUserIds" item="userId" index="index" open="(" close=")" separator=",">
+                #{userId}
+            </foreach>
+        </where>
+    </update>
+</mapper>

@@ -1,0 +1,39 @@
+server:
+  port: 8085
+# DataSource Config
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://8.136.17.98:3306/lol_admin?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root123
+  security:
+    user:
+      name: user
+      password: 111111
+  redis:
+    host: 8.136.17.98
+    database: 0
+    password: 123456
+    port: 6379
+    timeout: 20000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+  configuration:
+    #默认不显示SQL日志
+    #    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+jiangfendou:
+  jwt:
+    header: Authorization
+    expire: 604800 #7填  秒
+    secret: jiangfendou.00
+
+

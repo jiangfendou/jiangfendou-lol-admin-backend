@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangfendou.loladmin.mapper.SysRoleMapper">
+    <resultMap id="RoleResultMap" type="com.jiangfendou.loladmin.model.response.RoleResponse">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <select id="searchRoleList" resultMap="RoleResultMap">
+        SELECT
+            t1.name,
+            t1.code,
+            t1.remark
+        FROM
+            sys_role t1
+        INNER JOIN sys_user_role t2 ON t1.id = t2.role_id AND t2.is_deleted = 0
+        WHERE
+            t1.is_deleted = 0
+        AND
+            t2.user_id = #{userId}
+    </select>
+
+    <resultMap id="searchRoleMap" type="com.jiangfendou.loladmin.model.response.SearchRoleResponse">
+        <id property="id" column="role_id"></id>
+        <result property="name" column="name" />
+        <result property="code" column="code"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="updateDatetime" column="update_datetime"/>
+        <collection property="menuIds" ofType="com.jiangfendou.loladmin.model.response.SearchRoleResponse$MenuResponse"
+                    select="selectShopFile" column="role_id">
+            <id property="id" column="id"/>
+        </collection>
+    </resultMap>
+    <select id="searchRole" resultMap="searchRoleMap">
+        SELECT
+            t1.id AS role_id,
+            t1.name,
+            t1.code,
+            t1.remark,
+            t1.status,
+            t1.update_datetime
+        FROM
+            sys_role t1
+        <where>
+            t1.is_deleted = 0
+            <if test="searchRoleRequest.name != null and searchRoleRequest.name != ''">
+                AND t1.name = #{searchRoleRequest.name}
+            </if>
+            <if test="searchRoleRequest.code != null and searchRoleRequest.code != ''">
+                AND t1.code = #{searchRoleRequest.code}
+            </if>
+        </where>
+    </select>
+    <select id="selectShopFile" resultType="com.jiangfendou.loladmin.model.response.SearchRoleResponse$MenuResponse"  >
+        SELECT
+            t3.id
+        FROM
+            sys_role_menu t2
+        INNER JOIN
+            sys_menu t3
+        ON
+            t2.menu_id = t3.id
+        AND
+            t2.is_deleted =0
+        WHERE
+              t2.role_id =#{role_id}
+    </select>
+
+    <resultMap id="detailRoleMap" type="com.jiangfendou.loladmin.model.response.GetRoleDetailResponse">
+        <id property="id" column="id"></id>
+        <result property="name" column="name" />
+        <result property="code" column="code"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="created" column="creator"/>
+        <result property="updated" column="updater"/>
+        <result property="lockVersion" column="lock_version"/>
+    </resultMap>
+    <select id="detailRole" resultMap="detailRoleMap">
+        SELECT
+            t1.id,
+            t1.NAME,
+            t1.CODE,
+            t1.remark,
+            t1.STATUS,
+            t1.creator,
+            t1.updater,
+            t1.lock_version
+        FROM
+            sys_role t1
+        WHERE
+            t1.is_deleted = 0
+          AND t1.id = #{roleId}
+    </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangfendou.loladmin.mapper.SysUserMapper">
+
+    <resultMap id="SysUserMap" type="com.jiangfendou.loladmin.model.response.SearchUserResponse">
+        <id property="id" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="avatar" column="avatar"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="city" column="city"/>
+        <result property="lastLogin" column="last_login"/>
+        <result property="lockVersion" column="lock_version"/>
+        <result property="status" column="status"/>
+        <collection property="roles" ofType="com.jiangfendou.loladmin.model.response.SearchUserResponse$RoleResponse"
+                    select="searchRoles" column="user_id">
+        </collection>
+    </resultMap>
+    <update id="repassUser">
+        UPDATE sys_user
+        <trim prefix="set" suffixOverrides=",">
+            password = #{repassUserRequest.password},
+            lock_version = lock_version + 1
+        </trim>
+        <where>
+            id = #{repassUserRequest.id}
+        AND
+            lock_version = #{repassUserRequest.lockVersion}
+        </where>
+    </update>
+
+    <select id="getNavMenusIds" resultType="java.lang.Long">
+        SELECT
+            DISTINCT t2.menu_id
+        FROM
+            sys_user_role t1
+                LEFT JOIN sys_role_menu t2 ON t1.role_id = t2.role_id AND t2.is_deleted = 0
+        WHERE
+              t1.is_deleted = 0
+        AND
+              t1.user_id = #{userId}
+    </select>
+
+    <select id="searchUserList" resultType="com.jiangfendou.loladmin.entity.SysUser">
+        SELECT
+            t2.username,
+            t2.id
+        FROM
+            sys_role t1
+                INNER JOIN sys_user t2 ON t1.user_id = t2.id AND t2.is_deleted = 0
+        WHERE
+            t1.is_deleted = 0
+          AND
+            t1.id = #{roleId}
+    </select>
+
+    <select id="searchUser" resultMap="SysUserMap">
+        SELECT
+            t1.id AS user_id,
+            t1.username,
+            t1.avatar,
+            t1.phone,
+            t1.email,
+            t1.city,
+            t1.last_login,
+            t1.status,
+            t1.lock_version
+        FROM sys_user t1
+        <where>
+            t1.is_deleted = 0
+            <if test="searchUserRequest.username != null and searchUserRequest.username != ''">
+                AND t1.username LIKE CONCAT('%', #{searchUserRequest.username}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="searchRoles" resultType="com.jiangfendou.loladmin.model.response.SearchUserResponse$RoleResponse">
+        SELECT
+            t1.id,
+            t1.name
+        FROM sys_role t1
+        LEFT JOIN sys_user_role t2 ON t1.id = t2.role_id AND t2.is_deleted = 0
+        <where>
+            t1.is_deleted = 0
+        AND
+            t2.user_id = #{user_id}
+        </where>
+    </select>
+</mapper>
