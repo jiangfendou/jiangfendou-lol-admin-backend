@@ -177,7 +177,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             log.info("用户名称已经存在：username = {}", saveUserRequest.getUsername());
             throw new BusinessException(HttpStatus.BAD_REQUEST,
                 new ApiError(ErrorCodeEnum.USERNAME_EXIST_ERROR.getCode(),
-                    ErrorCodeEnum.USERNAME_EXIST_ERROR.getMessage()));
+                    String.format(ErrorCodeEnum.USERNAME_EXIST_ERROR.getMessage(), saveUserRequest.getUsername())));
         }
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(saveUserRequest, sysUser);
@@ -214,7 +214,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             log.info("用户名称已经存在：username = {}", updateUserRequest.getUsername());
             throw new BusinessException(HttpStatus.BAD_REQUEST,
                 new ApiError(ErrorCodeEnum.USERNAME_EXIST_ERROR.getCode(),
-                    ErrorCodeEnum.USERNAME_EXIST_ERROR.getMessage()));
+                    String.format(ErrorCodeEnum.USERNAME_EXIST_ERROR.getMessage(), updateUserRequest.getUsername())));
         }
         user = new SysUser();
         BeanUtils.copyProperties(updateUserRequest, user);

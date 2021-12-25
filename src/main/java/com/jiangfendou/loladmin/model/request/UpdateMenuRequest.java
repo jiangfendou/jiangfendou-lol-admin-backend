@@ -35,7 +35,7 @@ public class UpdateMenuRequest {
      * 授权（多个用逗号隔开，如：user:list,user:create）
      */
     @NotBlank(message = "perms: 不能为空")
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "perms: 最大长度为255， 最小长度为1")
     private String perms;
 
     @Size(max = 255, message = "component: 最大长度为255")

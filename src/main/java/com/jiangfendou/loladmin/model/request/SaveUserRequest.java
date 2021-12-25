@@ -21,7 +21,7 @@ public class SaveUserRequest {
     @Size(min = 1, max = 64, message = "phone: 最小长度为1，最大长度为25")
     private String phone;
 
-    @Email(message = "email:格式不正确")
+    @Email(message = "email: 格式不正确")
     private String email;
 
     /**

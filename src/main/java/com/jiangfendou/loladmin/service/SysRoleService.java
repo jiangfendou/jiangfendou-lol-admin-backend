@@ -1,8 +1,10 @@
 package com.jiangfendou.loladmin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.jiangfendou.loladmin.common.BusinessException;
 import com.jiangfendou.loladmin.entity.SysRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiangfendou.loladmin.model.request.SaveRoleRequest;
 import com.jiangfendou.loladmin.model.request.SearchRoleRequest;
 import com.jiangfendou.loladmin.model.response.GetRoleDetailResponse;
 import com.jiangfendou.loladmin.model.response.SearchRoleResponse;
@@ -30,4 +32,10 @@ public interface SysRoleService extends IService<SysRole> {
      * @return GetRoleDetailResponse GetRoleDetailResponse
      * */
     GetRoleDetailResponse detailRole(Long roleId);
+
+    /**
+     * saveRole()
+     * @param saveRoleRequest saveRoleRequest
+     * */
+    void saveRole(SaveRoleRequest saveRoleRequest) throws BusinessException;
 }

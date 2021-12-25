@@ -1,5 +1,8 @@
 package com.jiangfendou.loladmin.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,8 +18,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SysRole extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
-
     private String name;
 
     private String code;
@@ -26,7 +27,11 @@ public class SysRole extends BaseEntity {
      */
     private String remark;
 
+    @TableField(fill = FieldFill.UPDATE)
+    @Version
     private Integer lockVersion;
+
+    private Integer status;
 
 
 }

@@ -2,10 +2,16 @@ package com.jiangfendou.loladmin.controller;
 
 
 import com.jiangfendou.loladmin.common.ApiResponse;
+import com.jiangfendou.loladmin.common.BusinessException;
+import com.jiangfendou.loladmin.model.request.SaveRoleRequest;
 import com.jiangfendou.loladmin.model.request.SearchRoleRequest;
 import com.jiangfendou.loladmin.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +38,12 @@ public class SysRoleController extends BaseController {
     @GetMapping("/detail")
     public ApiResponse detailRole(Long roleId){
         return ApiResponse.success(sysRoleService.detailRole(roleId));
+    }
+
+    @PostMapping("/save")
+    public ApiResponse saveRole(@RequestBody @Validated SaveRoleRequest saveRoleRequest) throws BusinessException {
+        sysRoleService.saveRole(saveRoleRequest);
+        return ApiResponse.success();
     }
 
 
