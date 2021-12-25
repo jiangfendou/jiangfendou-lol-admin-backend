@@ -1,6 +1,5 @@
 package com.jiangfendou.loladmin.model.response;
 
-import com.baomidou.mybatisplus.annotation.Version;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +13,7 @@ import lombok.Data;
 public class SearchRoleResponse {
 
     private Long id;
-    @Version
+
     private String name;
 
     private String code;
@@ -22,6 +21,8 @@ public class SearchRoleResponse {
     private String remark;
 
     private Integer status;
+
+    private Integer lockVersion;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateDatetime;

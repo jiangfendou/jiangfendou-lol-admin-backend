@@ -6,6 +6,7 @@
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="code" jdbcType="VARCHAR" property="code" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="lock_version" jdbcType="VARCHAR" property="lockVersion" />
     </resultMap>
 
     <select id="searchRoleList" resultMap="RoleResultMap">
@@ -30,7 +31,7 @@
         <result property="status" column="status"/>
         <result property="updateDatetime" column="update_datetime"/>
         <collection property="menuIds" ofType="com.jiangfendou.loladmin.model.response.SearchRoleResponse$MenuResponse"
-                    select="selectShopFile" column="role_id">
+                    select="searchMenuIds" column="role_id">
             <id property="id" column="id"/>
         </collection>
     </resultMap>
@@ -41,6 +42,7 @@
             t1.code,
             t1.remark,
             t1.status,
+            t1.lock_version,
             t1.update_datetime
         FROM
             sys_role t1
@@ -54,7 +56,7 @@
             </if>
         </where>
     </select>
-    <select id="selectShopFile" resultType="com.jiangfendou.loladmin.model.response.SearchRoleResponse$MenuResponse"  >
+    <select id="searchMenuIds" resultType="com.jiangfendou.loladmin.model.response.SearchRoleResponse$MenuResponse"  >
         SELECT
             t3.id
         FROM
@@ -67,32 +69,5 @@
             t2.is_deleted =0
         WHERE
               t2.role_id =#{role_id}
-    </select>
-
-    <resultMap id="detailRoleMap" type="com.jiangfendou.loladmin.model.response.GetRoleDetailResponse">
-        <id property="id" column="id"></id>
-        <result property="name" column="name" />
-        <result property="code" column="code"/>
-        <result property="remark" column="remark"/>
-        <result property="status" column="status"/>
-        <result property="created" column="creator"/>
-        <result property="updated" column="updater"/>
-        <result property="lockVersion" column="lock_version"/>
-    </resultMap>
-    <select id="detailRole" resultMap="detailRoleMap">
-        SELECT
-            t1.id,
-            t1.NAME,
-            t1.CODE,
-            t1.remark,
-            t1.STATUS,
-            t1.creator,
-            t1.updater,
-            t1.lock_version
-        FROM
-            sys_role t1
-        WHERE
-            t1.is_deleted = 0
-          AND t1.id = #{roleId}
     </select>
 </mapper>

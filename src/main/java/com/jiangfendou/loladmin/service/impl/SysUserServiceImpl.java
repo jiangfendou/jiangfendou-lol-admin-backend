@@ -129,10 +129,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public void clearUserAuthorityInfoByRoleId(Long rolId) {
-        log.info("删除redis数据，userId = {}" , rolId);
+        log.info("删除redis数据，rolId = {}" , rolId);
         List<SysUser> sysUsers = sysUserMapper.searchUserList(rolId);
-        sysUsers.forEach(sysUser -> {
-            redisUtil.del(GRANTED_AUTHORITY + sysUser.getUsername());
+        List<SysUserRole> sysUserRoles = sysUserRoleMapper
+            .selectList(new QueryWrapper<SysUserRole>().eq("role_id", rolId)
+                .eq("is_deleted", DeletedEnum.NOT_DELETED));
+        sysUserRoles.stream().map(SysUserRole::getUserId).collect(Collectors.toList()).stream().distinct();
+        sysUserRoles.forEach(sysUserRole -> {
+            redisUtil.del(GRANTED_AUTHORITY + sysUserRole.getUserId());
+            redisUtil.del(USER_MENU + sysUserRole.getUserId());
         });
     }
 

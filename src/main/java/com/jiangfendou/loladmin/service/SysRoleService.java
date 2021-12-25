@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jiangfendou.loladmin.common.BusinessException;
 import com.jiangfendou.loladmin.entity.SysRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiangfendou.loladmin.model.request.DeleteRoleBatchRequest;
+import com.jiangfendou.loladmin.model.request.DeleteRoleRequest;
 import com.jiangfendou.loladmin.model.request.SaveRoleRequest;
 import com.jiangfendou.loladmin.model.request.SearchRoleRequest;
+import com.jiangfendou.loladmin.model.request.UpdateRoleRequest;
 import com.jiangfendou.loladmin.model.response.GetRoleDetailResponse;
 import com.jiangfendou.loladmin.model.response.SearchRoleResponse;
 
@@ -30,12 +33,35 @@ public interface SysRoleService extends IService<SysRole> {
      * detailRole()
      * @param roleId roleId
      * @return GetRoleDetailResponse GetRoleDetailResponse
+     * @throws BusinessException BusinessException
      * */
-    GetRoleDetailResponse detailRole(Long roleId);
+    GetRoleDetailResponse detailRole(Long roleId) throws BusinessException;
 
     /**
      * saveRole()
      * @param saveRoleRequest saveRoleRequest
+     * @throws BusinessException BusinessException
      * */
     void saveRole(SaveRoleRequest saveRoleRequest) throws BusinessException;
+
+    /**
+     * updateRole()
+     * @param updateRoleRequest updateRoleRequest
+     * @throws BusinessException BusinessException
+     * */
+    void updateRole(UpdateRoleRequest updateRoleRequest) throws BusinessException;
+
+    /**
+     * deleteRole()
+     * @param deleteRoleRequest deleteRoleRequest
+     * @throws BusinessException BusinessException
+     * */
+    void deleteRole(DeleteRoleRequest deleteRoleRequest) throws BusinessException;
+
+    /**
+     * deleteBatchRole()
+     * @param deleteRoleBatchRequest deleteRoleBatchRequest
+     * @throws BusinessException BusinessException
+     * */
+    void deleteBatchRole(DeleteRoleBatchRequest deleteRoleBatchRequest) throws BusinessException;
 }

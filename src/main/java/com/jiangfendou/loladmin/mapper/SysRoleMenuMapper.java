@@ -2,6 +2,8 @@ package com.jiangfendou.loladmin.mapper;
 
 import com.jiangfendou.loladmin.entity.SysRoleMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,5 +16,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SysRoleMenuMapper extends BaseMapper<SysRoleMenu> {
+
+    /**
+     * deleteRoleMenuBatch()
+     * @param deleteRoleIds deleteRoleIds
+     * */
+    void deleteRoleMenuBatch(@Param("deleteRoleIds") List<Long> deleteRoleIds);
 
 }

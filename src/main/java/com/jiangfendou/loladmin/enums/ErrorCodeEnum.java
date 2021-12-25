@@ -21,7 +21,8 @@ public enum ErrorCodeEnum {
     EXIST_CHILD_NODES("e.jfd.1012", "目标数据存在子节点"),
     USERNAME_EXIST_ERROR("e.jfd.1013", "用户名称--{%s}--已经存在"),
     LOCKED_BATCH_ERROR("e.jfd.1014", "目标数据--{%s}--已被锁定"),
-    ROLE_CODE_EXITS_ERROR("e.jfd.1015", "权限编码--{%s}--已存在");
+    ROLE_CODE_EXITS_ERROR("e.jfd.1015", "权限编码--{%s}--已存在"),
+    PERMISSION_CODE_REFERENCED("e.jfd.1016", "目标数据--{%s}--被引用无法删除");
 
     /** error code. */
     private final String code;

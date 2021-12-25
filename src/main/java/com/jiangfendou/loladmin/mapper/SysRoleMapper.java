@@ -38,11 +38,4 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
     IPage<SearchRoleResponse> searchRole(IPage<SearchRoleResponse> page,
                                          @Param("searchRoleRequest") SearchRoleRequest searchRoleRequest);
 
-    /**
-     * detailRole()
-     * @param roleId roleId
-     * @return GetRoleDetailResponse GetRoleDetailResponse
-     * */
-    GetRoleDetailResponse detailRole(@Param("roleId")Long roleId);
-
 }

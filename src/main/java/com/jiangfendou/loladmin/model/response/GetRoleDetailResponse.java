@@ -1,10 +1,12 @@
 package com.jiangfendou.loladmin.model.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * GetRoleDetailResponse.
+ * @author jiangmh
+ */
 @Data
 public class GetRoleDetailResponse {
 
@@ -16,14 +18,8 @@ public class GetRoleDetailResponse {
 
     private String remark;
 
-    private String status;
-
-    private LocalDateTime created;
-
-    private LocalDateTime updated;
+    private Integer status;
 
     private Integer lockVersion;
-
-    private List<Long> menuIds;
 
 }

@@ -41,13 +41,12 @@
               t1.user_id = #{userId}
     </select>
 
-    <select id="searchUserList" resultType="com.jiangfendou.loladmin.entity.SysUser">
+    <select id="searchUserList" resultType="com.jiangfendou.loladmin.entity.SysUserRole">
         SELECT
-            t2.username,
-            t2.id
+        DISTINCT
+            user_id AS userId
         FROM
-            sys_role t1
-                INNER JOIN sys_user t2 ON t1.user_id = t2.id AND t2.is_deleted = 0
+            sys_user_role t1
         WHERE
             t1.is_deleted = 0
           AND
