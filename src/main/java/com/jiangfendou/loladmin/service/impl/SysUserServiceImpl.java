@@ -134,10 +134,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         List<SysUserRole> sysUserRoles = sysUserRoleMapper
             .selectList(new QueryWrapper<SysUserRole>().eq("role_id", rolId)
                 .eq("is_deleted", DeletedEnum.NOT_DELETED));
-        sysUserRoles.stream().map(SysUserRole::getUserId).collect(Collectors.toList()).stream().distinct();
-        sysUserRoles.forEach(sysUserRole -> {
-            redisUtil.del(GRANTED_AUTHORITY + sysUserRole.getUserId());
-            redisUtil.del(USER_MENU + sysUserRole.getUserId());
+        List<Long> userIds =
+            sysUserRoles.stream().map(SysUserRole::getUserId).collect(Collectors.toList()).stream().distinct().collect(
+                Collectors.toList());
+        userIds.forEach(sysUserRole -> {
+            redisUtil.del(GRANTED_AUTHORITY + userIds);
+            redisUtil.del(USER_MENU + userIds);
         });
     }
 

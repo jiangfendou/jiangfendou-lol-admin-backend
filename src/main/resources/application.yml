@@ -36,4 +36,8 @@ jiangfendou:
     expire: 604800 #7填  秒
     secret: jiangfendou.00
 
+# 验证码开关
+captcha:
+  switch: false
+
 

@@ -20,5 +20,5 @@ public interface SysUserRoleService extends IService<SysUserRole> {
      * @param updateUserRoleRequest updateUserRoleRequest
      * @throws BusinessException BusinessException
      * */
-    void updateUserRole(UpdateUserRoleRequest updateUserRoleRequest);
+    void updateUserRole(UpdateUserRoleRequest updateUserRoleRequest) throws BusinessException;
 }

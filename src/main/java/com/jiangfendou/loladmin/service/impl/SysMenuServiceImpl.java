@@ -2,16 +2,19 @@ package com.jiangfendou.loladmin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jiangfendou.loladmin.common.ApiError;
 import com.jiangfendou.loladmin.common.BusinessException;
 import com.jiangfendou.loladmin.entity.SysMenu;
+import com.jiangfendou.loladmin.entity.SysRole;
 import com.jiangfendou.loladmin.entity.SysRoleMenu;
 import com.jiangfendou.loladmin.entity.SysUser;
 import com.jiangfendou.loladmin.enums.DeletedEnum;
 import com.jiangfendou.loladmin.enums.ErrorCodeEnum;
 import com.jiangfendou.loladmin.enums.StatusEnum;
 import com.jiangfendou.loladmin.mapper.SysMenuMapper;
+import com.jiangfendou.loladmin.mapper.SysRoleMapper;
 import com.jiangfendou.loladmin.mapper.SysRoleMenuMapper;
 import com.jiangfendou.loladmin.model.request.SaveMenuRequest;
 import com.jiangfendou.loladmin.model.request.DeleteMenuRequest;
@@ -27,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +62,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -185,9 +193,24 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         // 如果不是最低级别的菜单需要做校验
         int count = this.count(new QueryWrapper<SysMenu>().eq("parent_id", deleteMenuRequest.getId()));
         if (count > 0) {
-            log.info("deleteMenu() ---目标文件存在子节点， menuId = {}", deleteMenuRequest.getId());
+            log.info("deleteMenu() ---目标数据存在子节点， menuId = {}", deleteMenuRequest.getId());
             throw new BusinessException(HttpStatus.FORBIDDEN,
                 new ApiError(ErrorCodeEnum.EXIST_CHILD_NODES.getCode(), ErrorCodeEnum.EXIST_CHILD_NODES.getMessage()));
+        }
+        // 判断该菜单是否被引用
+        List<SysRoleMenu> sysRoleMenus = sysRoleMenuMapper.selectList(
+            new QueryWrapper<SysRoleMenu>().eq("menu_id", deleteMenuRequest.getId())
+                .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+        if (!CollectionUtils.isEmpty(sysRoleMenus)) {
+            List<Long> roleIds =
+                sysRoleMenus.stream().map(SysRoleMenu::getRoleId).collect(Collectors.toList()).stream()
+                    .distinct().collect(Collectors.toList());
+            List<SysRole> sysRoles = sysRoleMapper.selectBatchIds(roleIds);
+            List<String> roleNames = sysRoles.stream().map(SysRole::getName).collect(Collectors.toList());
+            log.info("deleteMenu() ---目标数据被， role name = {}，所引用无法删除", roleNames);
+            throw new BusinessException(HttpStatus.UNAUTHORIZED,
+                new ApiError(ErrorCodeEnum.MENU_INFO_REFERENCED.getCode(),
+                    String.format(ErrorCodeEnum.MENU_INFO_REFERENCED.getMessage(), roleNames)));
         }
         sysMenu = new SysMenu();
         sysMenu.setId(deleteMenuRequest.getId());

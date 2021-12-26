@@ -7,7 +7,9 @@ import com.jiangfendou.loladmin.model.request.DeleteRoleBatchRequest;
 import com.jiangfendou.loladmin.model.request.DeleteRoleRequest;
 import com.jiangfendou.loladmin.model.request.SaveRoleRequest;
 import com.jiangfendou.loladmin.model.request.SearchRoleRequest;
+import com.jiangfendou.loladmin.model.request.UpdateRoleMenuRequest;
 import com.jiangfendou.loladmin.model.request.UpdateRoleRequest;
+import com.jiangfendou.loladmin.service.SysRoleMenuService;
 import com.jiangfendou.loladmin.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +36,9 @@ public class SysRoleController extends BaseController {
 
     @Autowired
     private SysRoleService sysRoleService;
+
+    @Autowired
+    private SysRoleMenuService sysRoleMenuService;
 
     @GetMapping("/list")
     public ApiResponse searchRole(SearchRoleRequest searchRoleRequest){
@@ -68,6 +74,13 @@ public class SysRoleController extends BaseController {
     public ApiResponse deleteBatchRole(@RequestBody @Validated DeleteRoleBatchRequest deleteRoleRequest)
         throws BusinessException {
         sysRoleService.deleteBatchRole(deleteRoleRequest);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/update-role-menu")
+    public ApiResponse updateRoleMenu(@RequestBody @Validated UpdateRoleMenuRequest updateRoleMenuRequest)
+        throws BusinessException {
+        sysRoleMenuService.updateRoleMenu(updateRoleMenuRequest);
         return ApiResponse.success();
     }
 

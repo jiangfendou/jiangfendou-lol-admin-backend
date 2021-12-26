@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,9 @@ public class AuthController extends BaseController {
     @Autowired
     private Producer producer;
 
+    @Value("${captcha.switch}")
+    private Boolean captchaSwitch;
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -31,10 +35,11 @@ public class AuthController extends BaseController {
         String key = UUID.randomUUID().toString();
         String code = producer.createText();
         log.info("captchaImg is code = {}", code);
-
-        key = "aaaaa";
-        code = "11111";
-
+        // 验证码开关
+        if (!captchaSwitch) {
+            key = "aaaaa";
+            code = "11111";
+        }
         BufferedImage image = producer.createImage(code);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(image, "jpg", outputStream);

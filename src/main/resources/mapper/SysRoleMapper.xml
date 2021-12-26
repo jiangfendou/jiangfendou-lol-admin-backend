@@ -49,10 +49,10 @@
         <where>
             t1.is_deleted = 0
             <if test="searchRoleRequest.name != null and searchRoleRequest.name != ''">
-                AND t1.name = #{searchRoleRequest.name}
+                AND t1.name LIKE CONCAT('%', #{searchRoleRequest.name}, '%')
             </if>
             <if test="searchRoleRequest.code != null and searchRoleRequest.code != ''">
-                AND t1.code = #{searchRoleRequest.code}
+                AND t1.code LIKE CONCAT('%', #{searchRoleRequest.code}, '%')
             </if>
         </where>
     </select>

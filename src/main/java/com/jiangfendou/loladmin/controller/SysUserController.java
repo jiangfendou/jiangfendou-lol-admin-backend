@@ -87,7 +87,8 @@ public class SysUserController extends BaseController {
     }
 
     @PostMapping("/update-user-role")
-    public ApiResponse updateUserRole(@RequestBody @Validated UpdateUserRoleRequest updateUserRoleRequest) {
+    public ApiResponse updateUserRole(@RequestBody @Validated UpdateUserRoleRequest updateUserRoleRequest)
+        throws BusinessException {
         sysUserRoleService.updateUserRole(updateUserRoleRequest);
         return ApiResponse.success();
     }

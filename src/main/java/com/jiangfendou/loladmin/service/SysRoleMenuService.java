@@ -2,6 +2,7 @@ package com.jiangfendou.loladmin.service;
 
 import com.jiangfendou.loladmin.entity.SysRoleMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiangfendou.loladmin.model.request.UpdateRoleMenuRequest;
 
 /**
  * <p>
@@ -13,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface SysRoleMenuService extends IService<SysRoleMenu> {
 
+    /**
+     * updateRoleMenu()s
+     * @param updateRoleMenuRequest updateRoleMenuRequest
+     * */
+    void updateRoleMenu(UpdateRoleMenuRequest updateRoleMenuRequest);
 }
