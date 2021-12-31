@@ -54,6 +54,8 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     private static final String USER_MENU = "UserMenu:";
 
+    private static final String GRANTED_AUTHORITY = "GrantedAuthority:";
+
     @Autowired
     private SysUserService sysUserService;
 
@@ -72,10 +74,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public MenuAuthorityResponse getMenuNav(Long userId) throws BusinessException {
         MenuAuthorityResponse menuAuthorityResponse = new MenuAuthorityResponse();
-        List<MenuAuthorityResponse.Menu> menus;
-        if (redisUtil.hasKey(USER_MENU + userId)) {
+        List<MenuAuthorityResponse.Menu> menus = new ArrayList<>();
+        List<String> userAuthorityList = new ArrayList<>();
+        if (redisUtil.hasKey(USER_MENU + userId) && redisUtil.hasKey(GRANTED_AUTHORITY + userId)) {
             menus = (List<MenuAuthorityResponse.Menu>)redisUtil.get(USER_MENU + userId);
             log.info("redis获取menu信息 -------{}, menus = {}", USER_MENU + userId, menus);
+            userAuthorityList = Arrays.asList(((String) redisUtil.get(GRANTED_AUTHORITY + userId)).split(","));
+            log.info("redis获取menu信息 -------{}, GrantedAuthority = {}", GRANTED_AUTHORITY + userId, userAuthorityList);
         } else {
             SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("id", userId)
                 .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
@@ -90,8 +95,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 menuAuthorityResponse.setAuthorities(new ArrayList<>());
             } else {
                 String[] userAuthorityArray = userAuthorityInfo.split(",");
-                List<String> userAuthorityList = Arrays.asList(userAuthorityArray);
-                menuAuthorityResponse.setAuthorities(userAuthorityList);
+                userAuthorityList = Arrays.asList(userAuthorityArray);
             }
 
             List<Long> navMenuIds = sysMenuMapper.getNavMenuIds(userId);
@@ -115,6 +119,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 redisUtil.set(USER_MENU + userId, menus, 60*60);
             }
         }
+        menuAuthorityResponse.setAuthorities(userAuthorityList);
         menuAuthorityResponse.setNav(menus);
         return menuAuthorityResponse;
     }

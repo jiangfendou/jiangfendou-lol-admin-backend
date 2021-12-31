@@ -8,17 +8,16 @@ import com.jiangfendou.loladmin.model.request.DeleteUserRequest;
 import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SaveUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
+import com.jiangfendou.loladmin.model.request.UpdatePasswordRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRoleRequest;
 import com.jiangfendou.loladmin.service.SysUserRoleService;
 import com.jiangfendou.loladmin.service.SysUserService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,10 +50,10 @@ public class SysUserController extends BaseController {
     @GetMapping("/list")
     public ApiResponse searchUser(SearchUserRequest searchUserRequest) {
         return ApiResponse.success(sysUserService.searchUser(searchUserRequest));
-
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('admin')")
     public ApiResponse saveUser(@RequestBody @Validated SaveUserRequest searchUserRequest) throws BusinessException {
         sysUserService.saveUser(searchUserRequest);
         return ApiResponse.success();
@@ -73,6 +72,7 @@ public class SysUserController extends BaseController {
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('admin')")
     public ApiResponse deleteUser(@RequestBody @Validated DeleteUserRequest deleteUserRequest)
         throws BusinessException {
         sysUserService.deleteUser(deleteUserRequest);
@@ -97,6 +97,13 @@ public class SysUserController extends BaseController {
     public ApiResponse deleteUserBatch(@RequestBody @Validated DeleteUserBatchRequest deleteUserBatchRequest)
         throws BusinessException {
         sysUserService.deleteUserBatch(deleteUserBatchRequest);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/update-password")
+    public ApiResponse updatePassword(@RequestBody @Validated UpdatePasswordRequest updatePasswordRequest)
+        throws BusinessException {
+        sysUserService.updatePassword(updatePasswordRequest);
         return ApiResponse.success();
     }
 

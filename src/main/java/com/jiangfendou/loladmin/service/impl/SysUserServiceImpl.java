@@ -19,6 +19,7 @@ import com.jiangfendou.loladmin.model.request.DeleteUserRequest;
 import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SaveUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
+import com.jiangfendou.loladmin.model.request.UpdatePasswordRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.response.GetUserDetailResponse;
 import com.jiangfendou.loladmin.model.response.RoleResponse;
@@ -314,5 +315,32 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         // 删除redis 缓存
         deleteUserIds.forEach(this::clearUserAuthorityInfo);
+    }
+
+    @Override
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) throws BusinessException {
+        SysUser sysUser = this.getOne(new QueryWrapper<SysUser>().eq("id", updatePasswordRequest.getId())
+            .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+        if (Objects.isNull(sysUser)) {
+            log.info("没有找到的指定用户信息：userId = {}", updatePasswordRequest.getId());
+            throw new BusinessException(HttpStatus.NOT_FOUND,
+                new ApiError(ErrorCodeEnum.NOT_FOUND.getCode(), ErrorCodeEnum.NOT_FOUND.getMessage()));
+
+        }
+        if (!bCryptPasswordEncoder.matches(updatePasswordRequest.getCurrentPass(), sysUser.getPassword())) {
+            log.info("updatePassword() 旧密码输入错误：userId = {}", updatePasswordRequest.getId());
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
+                new ApiError(ErrorCodeEnum.OLD_PASSWORD_ERROR.getCode(), ErrorCodeEnum.OLD_PASSWORD_ERROR.getMessage()));
+        }
+        if (!Objects.equals(updatePasswordRequest.getPassword(), updatePasswordRequest.getCheckPass())) {
+            log.info("updatePassword() 确认密码输入错误：userId = {}", updatePasswordRequest.getId());
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
+                new ApiError(ErrorCodeEnum.CONFIRM_PASSWORD_ERROR.getCode(), ErrorCodeEnum.CONFIRM_PASSWORD_ERROR.getMessage()));
+        }
+        sysUser = new SysUser();
+        sysUser.setId(updatePasswordRequest.getId());
+        sysUser.setPassword(bCryptPasswordEncoder.encode(updatePasswordRequest.getPassword()));
+        sysUser.setLockVersion(updatePasswordRequest.getLockVersion());
+        this.updateById(sysUser);
     }
 }

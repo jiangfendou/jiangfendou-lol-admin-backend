@@ -16,11 +16,14 @@ public class SysUserResponse {
 
     private String avatar;
 
+    private Integer lockVersion;
+
     public static SysUserResponse convert(SysUser sysUser) {
         SysUserResponse sysUserResponse = new SysUserResponse();
         sysUserResponse.setId(sysUser.getId());
         sysUserResponse.setUsername(sysUser.getUsername());
         sysUserResponse.setAvatar(sysUser.getAvatar());
+        sysUserResponse.setLockVersion(sysUser.getLockVersion());
         return sysUserResponse;
     }
 

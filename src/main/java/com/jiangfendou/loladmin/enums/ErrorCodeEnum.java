@@ -23,8 +23,9 @@ public enum ErrorCodeEnum {
     LOCKED_BATCH_ERROR("e.jfd.1014", "目标数据--{%s}--已被锁定"),
     ROLE_CODE_EXITS_ERROR("e.jfd.1015", "权限编码--{%s}--已存在"),
     PERMISSION_CODE_REFERENCED("e.jfd.1016", "目标数据--{%s}--被引用无法删除"),
-    MENU_INFO_REFERENCED("e.jfd.1017", "目标数据被角色--{%s}--引用无法删除");
-
+    MENU_INFO_REFERENCED("e.jfd.1017", "目标数据被角色--{%s}--引用无法删除"),
+    OLD_PASSWORD_ERROR("e.jfd.1018", "旧密码输入错误"),
+    CONFIRM_PASSWORD_ERROR("e.jfd.1019", "确认密码输入错误");
     /** error code. */
     private final String code;
     /** error message. */

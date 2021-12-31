@@ -9,6 +9,7 @@ import com.jiangfendou.loladmin.model.request.DeleteUserRequest;
 import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SaveUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
+import com.jiangfendou.loladmin.model.request.UpdatePasswordRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRoleRequest;
 import com.jiangfendou.loladmin.model.response.GetUserDetailResponse;
@@ -115,4 +116,11 @@ public interface SysUserService extends IService<SysUser> {
      * @throws BusinessException BusinessException
      * */
     void deleteUserBatch(DeleteUserBatchRequest deleteUserBatchRequest) throws BusinessException;
+
+    /**
+     * updatePassword()
+     * @param updatePasswordRequest updatePasswordRequest
+     * @throws BusinessException BusinessException
+     * */
+    void updatePassword(UpdatePasswordRequest updatePasswordRequest) throws BusinessException;
 }

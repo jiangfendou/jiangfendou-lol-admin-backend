@@ -36,13 +36,13 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
 
     @Override
     public void updateUserRole(UpdateUserRoleRequest updateUserRoleRequest) throws BusinessException {
-        SysUserRole userRole =
-            this.getOne(new QueryWrapper<SysUserRole>().eq("user_id", updateUserRoleRequest.getUserId())
-                .eq("is_deleted", DeletedEnum.NOT_DELETED));
-        if (!Objects.isNull(userRole)) {
+        List<SysUserRole> userRoles =
+            this.list(new QueryWrapper<SysUserRole>().eq("user_id", updateUserRoleRequest.getUserId())
+                .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+        if (!Objects.isNull(userRoles)) {
             // 删除当前用户下的所有角色
             this.remove(new QueryWrapper<SysUserRole>().eq("user_id", updateUserRoleRequest.getUserId())
-                .eq("is_deleted", DeletedEnum.NOT_DELETED));
+                .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
         }
         // 添加当前用户下的所有权限
         List<SysUserRole> sysUserRoles = new ArrayList<>();
