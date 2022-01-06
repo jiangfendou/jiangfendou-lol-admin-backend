@@ -1,11 +1,13 @@
 package com.jiangfendou.loladmin.service.impl;
 
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiangfendou.loladmin.common.ApiError;
 import com.jiangfendou.loladmin.common.BusinessException;
 import com.jiangfendou.loladmin.entity.SysMenu;
+import com.jiangfendou.loladmin.entity.SysRole;
 import com.jiangfendou.loladmin.entity.SysUser;
 import com.jiangfendou.loladmin.entity.SysUserRole;
 import com.jiangfendou.loladmin.enums.DeletedEnum;
@@ -20,20 +22,23 @@ import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SaveUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdatePasswordRequest;
+import com.jiangfendou.loladmin.model.request.UpdateUserAvatarRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.response.GetUserDetailResponse;
 import com.jiangfendou.loladmin.model.response.RoleResponse;
 import com.jiangfendou.loladmin.model.response.SearchUserResponse;
+import com.jiangfendou.loladmin.model.response.SysUserIndexResponse;
 import com.jiangfendou.loladmin.model.response.SysUserResponse;
 import com.jiangfendou.loladmin.service.SysMenuService;
 import com.jiangfendou.loladmin.service.SysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiangfendou.loladmin.util.QiniuCloudUtil;
 import com.jiangfendou.loladmin.util.RedisUtil;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +48,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -83,6 +89,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private QiniuCloudUtil qiniuCloudUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -165,6 +174,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 new ApiError(ErrorCodeEnum.NOT_FOUND.getCode(), ErrorCodeEnum.NOT_FOUND.getMessage()));
         }
         return SysUserResponse.convert(sysUser);
+    }
+
+    @Override
+    public SysUserIndexResponse getUserIndex(Long userId) {
+        SysUser sysUser = this.getOne(
+            new QueryWrapper<SysUser>().eq("id", userId)
+                .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+        List<SysUserRole> sysUserRoles =
+            sysUserRoleMapper.selectList(new QueryWrapper<SysUserRole>().eq("user_id", userId));
+        List<Long> roleIds = sysUserRoles.stream().map(SysUserRole::getRoleId).collect(Collectors.toList());
+        List<SysRole> sysRoles = sysRoleMapper.selectList(new QueryWrapper<SysRole>().in("id", roleIds));
+        List<String> roleNames =
+            sysRoles.stream().map(SysRole::getName).collect(Collectors.toList());
+        SysUserIndexResponse sysUserIndexResponse = new SysUserIndexResponse();
+        BeanUtils.copyProperties(sysUser, sysUserIndexResponse);
+        sysUserIndexResponse.setRoleNames(roleNames);
+        return sysUserIndexResponse;
     }
 
     @Override
@@ -342,5 +368,29 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUser.setPassword(bCryptPasswordEncoder.encode(updatePasswordRequest.getPassword()));
         sysUser.setLockVersion(updatePasswordRequest.getLockVersion());
         this.updateById(sysUser);
+    }
+
+    @Override
+    public void uploadImage(UpdateUserAvatarRequest updateUserAvatarRequest) throws BusinessException {
+        String url = null;
+        try {
+            byte[] bytes = updateUserAvatarRequest.getMultipartFile().getBytes();
+            String imageName = UUID.randomUUID().toString();
+            //使用base64方式上传到七牛云
+            url = qiniuCloudUtil.put64image(bytes, imageName);
+        } catch (Exception e) {
+            log.info("uploadImage() 图片上传失败");
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
+                new ApiError(ErrorCodeEnum.UPLOAD_IMAGE_ERROR.getCode(), ErrorCodeEnum.UPLOAD_IMAGE_ERROR.getMessage()));
+        }
+        SysUser sysUser = new SysUser();
+        sysUser.setAvatar(url);
+        sysUser.setId(updateUserAvatarRequest.getId());
+        sysUser.setLockVersion(updateUserAvatarRequest.getLockVersion());
+        if (!this.updateById(sysUser)) {
+            log.info("repassUser() ---目标数据已经被锁定， userId = {}", updateUserAvatarRequest.getId());
+            throw new BusinessException(HttpStatus.LOCKED,
+                new ApiError(ErrorCodeEnum.LOCKED.getCode(), ErrorCodeEnum.LOCKED.getMessage()));
+        }
     }
 }

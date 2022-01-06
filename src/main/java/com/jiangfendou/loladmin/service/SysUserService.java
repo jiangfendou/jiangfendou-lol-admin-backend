@@ -10,12 +10,15 @@ import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SaveUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdatePasswordRequest;
+import com.jiangfendou.loladmin.model.request.UpdateUserAvatarRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRoleRequest;
 import com.jiangfendou.loladmin.model.response.GetUserDetailResponse;
 import com.jiangfendou.loladmin.model.response.SearchUserResponse;
+import com.jiangfendou.loladmin.model.response.SysUserIndexResponse;
 import com.jiangfendou.loladmin.model.response.SysUserResponse;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -66,6 +69,13 @@ public interface SysUserService extends IService<SysUser> {
      * @throws BusinessException BusinessException
      * */
     SysUserResponse getUserInfo(Long userId) throws BusinessException;
+
+    /**
+     * getUserIndex()
+     * @param userId userId
+     * @return SysUserIndexResponse SysUserIndexResponse
+     * */
+    SysUserIndexResponse getUserIndex(Long userId);
 
     /**
      * searchUser()
@@ -123,4 +133,11 @@ public interface SysUserService extends IService<SysUser> {
      * @throws BusinessException BusinessException
      * */
     void updatePassword(UpdatePasswordRequest updatePasswordRequest) throws BusinessException;
+
+    /**
+     * uploadImage()
+     * @param updateUserAvatarRequest updateUserAvatarRequest
+     * @throws BusinessException BusinessException
+     * */
+    void uploadImage(UpdateUserAvatarRequest updateUserAvatarRequest) throws BusinessException;
 }

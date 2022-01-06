@@ -25,7 +25,10 @@ public enum ErrorCodeEnum {
     PERMISSION_CODE_REFERENCED("e.jfd.1016", "目标数据--{%s}--被引用无法删除"),
     MENU_INFO_REFERENCED("e.jfd.1017", "目标数据被角色--{%s}--引用无法删除"),
     OLD_PASSWORD_ERROR("e.jfd.1018", "旧密码输入错误"),
-    CONFIRM_PASSWORD_ERROR("e.jfd.1019", "确认密码输入错误");
+    CONFIRM_PASSWORD_ERROR("e.jfd.1019", "确认密码输入错误"),
+    UPLOAD_TOKEN_ERROR("e.jfd.1020", "上传图片的密钥不能为空"),
+    UPLOAD_IMAGE_ERROR("e.jfd.1021", "上传图片失败");
+
     /** error code. */
     private final String code;
     /** error message. */

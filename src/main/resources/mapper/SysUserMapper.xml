@@ -16,6 +16,7 @@
                     select="searchRoles" column="user_id">
         </collection>
     </resultMap>
+
     <update id="repassUser">
         UPDATE sys_user
         <trim prefix="set" suffixOverrides=",">

@@ -9,6 +9,7 @@ import com.jiangfendou.loladmin.model.request.RepassUserRequest;
 import com.jiangfendou.loladmin.model.request.SearchUserRequest;
 import com.jiangfendou.loladmin.model.request.UpdateUserRequest;
 import com.jiangfendou.loladmin.model.response.SearchUserResponse;
+import com.jiangfendou.loladmin.model.response.SysUserIndexResponse;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -53,5 +54,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return int int
      * */
     int repassUser(@Param("repassUserRequest") RepassUserRequest repassUserRequest);
+
 
 }
