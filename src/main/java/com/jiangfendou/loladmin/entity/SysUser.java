@@ -30,6 +30,8 @@ public class SysUser extends BaseEntity {
      */
     private String avatar;
 
+    private String avatarName;
+
     private String phone;
 
     private String email;

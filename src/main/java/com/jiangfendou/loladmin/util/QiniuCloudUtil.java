@@ -98,26 +98,22 @@ public class QiniuCloudUtil {
     /**
      * 普通删除(暂未使用以下方法，未测试)
      */
-    public void delete(String key) throws IOException {
+    public void delete(String key) throws BusinessException {
         // 实例化一个BucketManager对象
         BucketManager bucketManager = new BucketManager(AUTH);
-        // 此处的33是去掉：http://ongsua0j7.bkt.clouddn.com/,剩下的key就是图片在七牛云的名称
-        key = key.substring(33);
         try {
             // 调用delete方法移动文件
             bucketManager.delete(BUCKET_NAME, key);
         } catch (QiniuException e) {
+            e.printStackTrace();
             // 捕获异常信息
-            Response r = e.response;
-            System.out.println(r.toString());
+            log.info("delete() ---上传图片异常 error message = {}", e.getMessage());
+            throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
+                new ApiError(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getMessage()));
         }
     }
 
     class Ret {
-        public long fsize;
         public String key;
-        public String hash;
-        public int width;
-        public int height;
     }
 }

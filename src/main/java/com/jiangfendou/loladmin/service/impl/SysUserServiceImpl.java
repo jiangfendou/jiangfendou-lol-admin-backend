@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -372,10 +373,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public void uploadImage(UpdateUserAvatarRequest updateUserAvatarRequest) throws BusinessException {
+        SysUser sysUser = this.getOne(new QueryWrapper<SysUser>().eq("id", updateUserAvatarRequest.getId())
+            .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+        if (Objects.isNull(sysUser)) {
+            log.info("没有找到的指定用户信息：userId = {}", updateUserAvatarRequest.getId());
+            throw new BusinessException(HttpStatus.NOT_FOUND,
+                new ApiError(ErrorCodeEnum.NOT_FOUND.getCode(), ErrorCodeEnum.NOT_FOUND.getMessage()));
+        }
+        if (StringUtils.isNotBlank(sysUser.getAvatarName())) {
+            qiniuCloudUtil.delete(sysUser.getAvatarName());
+        }
         String url = null;
+        String imageName = null;
         try {
             byte[] bytes = updateUserAvatarRequest.getMultipartFile().getBytes();
-            String imageName = UUID.randomUUID().toString();
+            imageName = UUID.randomUUID().toString();
             //使用base64方式上传到七牛云
             url = qiniuCloudUtil.put64image(bytes, imageName);
         } catch (Exception e) {
@@ -383,10 +395,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR,
                 new ApiError(ErrorCodeEnum.UPLOAD_IMAGE_ERROR.getCode(), ErrorCodeEnum.UPLOAD_IMAGE_ERROR.getMessage()));
         }
-        SysUser sysUser = new SysUser();
+        sysUser = new SysUser();
         sysUser.setAvatar(url);
         sysUser.setId(updateUserAvatarRequest.getId());
         sysUser.setLockVersion(updateUserAvatarRequest.getLockVersion());
+        sysUser.setAvatarName(imageName);
         if (!this.updateById(sysUser)) {
             log.info("repassUser() ---目标数据已经被锁定， userId = {}", updateUserAvatarRequest.getId());
             throw new BusinessException(HttpStatus.LOCKED,

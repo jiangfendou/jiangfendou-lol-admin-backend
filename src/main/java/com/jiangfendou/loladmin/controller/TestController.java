@@ -4,18 +4,14 @@ import com.jiangfendou.loladmin.common.ApiResponse;
 import com.jiangfendou.loladmin.common.BusinessException;
 import com.jiangfendou.loladmin.entity.SysUser;
 import com.jiangfendou.loladmin.service.SysUserService;
-import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.codec.binary.Base64;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -71,8 +67,10 @@ public class TestController {
 //            System.out.println("false" + false);
 //        }
 
-        OffsetDateTime parse = OffsetDateTime
-            .parse("2021-10-10T10:10:10+07:00", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
-        System.out.println(parse);
+//        OffsetDateTime parse = OffsetDateTime
+//            .parse("2021-10-10T10:10:10+07:00", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+        Base64 base64 = new Base64();
+        String encode = base64.encodeAsString("qiniuphotos:gogopher.jpg".getBytes(StandardCharsets.UTF_8));
+        System.out.println(encode);
     }
 }

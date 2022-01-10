@@ -28,6 +28,8 @@ public class SysUserIndexResponse {
      */
     private LocalDateTime lastLogin;
 
+    private Integer lockVersion;
+
     private List<String> roleNames;
 
 }
