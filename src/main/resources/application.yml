@@ -12,8 +12,8 @@ spring:
       name: user
       password: 111111
   redis:
-    host: 8.136.17.98
-    database: 0
+    host: 124.223.59.118
+    database: 1
     password: 123456
     port: 6379
     timeout: 20000

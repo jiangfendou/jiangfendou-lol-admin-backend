@@ -62,6 +62,6 @@ public interface SysMenuService extends IService<SysMenu> {
      * addMenu()
      * @param addMenuRequest addMenuRequest
      * */
-    void saveMenu(SaveMenuRequest addMenuRequest);
+    void saveMenu(SaveMenuRequest addMenuRequest) throws BusinessException;
 
 }

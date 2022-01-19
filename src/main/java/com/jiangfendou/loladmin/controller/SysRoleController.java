@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,8 +77,7 @@ public class SysRoleController extends BaseController {
     }
 
     @PutMapping("/update-role-menu")
-    public ApiResponse updateRoleMenu(@RequestBody @Validated UpdateRoleMenuRequest updateRoleMenuRequest)
-        throws BusinessException {
+    public ApiResponse updateRoleMenu(@RequestBody @Validated UpdateRoleMenuRequest updateRoleMenuRequest) {
         sysRoleMenuService.updateRoleMenu(updateRoleMenuRequest);
         return ApiResponse.success();
     }

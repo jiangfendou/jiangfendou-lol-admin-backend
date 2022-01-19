@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -99,7 +98,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             }
 
             List<Long> navMenuIds = sysMenuMapper.getNavMenuIds(userId);
-
+            if (CollectionUtils.isEmpty(navMenuIds)) {
+                log.info("没有找到的指定用户菜单：userId = {}", userId);
+                throw new BusinessException(HttpStatus.NOT_FOUND,
+                    new ApiError(ErrorCodeEnum.NOT_FOUND.getCode(), ErrorCodeEnum.NOT_FOUND.getMessage()));
+            }
             LambdaQueryWrapper<SysMenu> sysMenuLambdaQueryWrapper = new LambdaQueryWrapper<>();
             sysMenuLambdaQueryWrapper.in(SysMenu::getId, navMenuIds);
             sysMenuLambdaQueryWrapper.eq(SysMenu::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
@@ -238,12 +241,20 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveMenu(SaveMenuRequest saveMenuRequest) {
+    public void saveMenu(SaveMenuRequest saveMenuRequest) throws BusinessException {
         SysMenu sysMenu = new SysMenu();
+        SysMenu perms = this.getOne(new QueryWrapper<SysMenu>()
+            .eq("perms", saveMenuRequest.getPerms())
+            .eq("is_deleted", DeletedEnum.NOT_DELETED));
+        if (perms != null) {
+            log.info("updateMenu() ---权限编码已存在， Perms = {}", saveMenuRequest.getPerms());
+            throw new BusinessException(HttpStatus.BAD_REQUEST,
+                new ApiError(ErrorCodeEnum.MENU_PERM_CODE_EXIST.getCode(),
+                    String.format(ErrorCodeEnum.MENU_PERM_CODE_EXIST.getMessage(), saveMenuRequest.getPerms())));
+        }
         BeanUtils.copyProperties(saveMenuRequest, sysMenu);
         this.save(sysMenu);
     }
-
 
     /**
      * menu菜单转树状结构

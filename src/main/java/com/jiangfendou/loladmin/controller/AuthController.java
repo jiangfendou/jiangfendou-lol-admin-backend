@@ -31,7 +31,7 @@ public class AuthController extends BaseController {
     private RedisUtil redisUtil;
 
     @GetMapping("/captcha")
-    public ApiResponse captcha() throws IOException {
+    public ApiResponse<Object> captcha() throws IOException {
         String key = UUID.randomUUID().toString();
         String code = producer.createText();
         log.info("captchaImg is code = {}", code);
