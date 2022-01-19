@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 /**
  * ApiResponse class.
  *
- * @author guozheng.xi
+ * @author jiangfendou
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {

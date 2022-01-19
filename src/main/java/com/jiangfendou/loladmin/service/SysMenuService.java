@@ -31,10 +31,11 @@ public interface SysMenuService extends IService<SysMenu> {
 
     /**
      * searchMenus()
+     * @param status status
      * @return List<SearchMenusResponse> List<SearchMenusResponse>
      * @throws BusinessException BusinessException
      * */
-    List<SearchMenusResponse> searchMenus() throws BusinessException;
+    List<SearchMenusResponse> searchMenus(Integer status) throws BusinessException;
 
     /**
      * getMenuDetail()
@@ -61,6 +62,7 @@ public interface SysMenuService extends IService<SysMenu> {
     /**
      * addMenu()
      * @param addMenuRequest addMenuRequest
+     * @throws BusinessException BusinessException
      * */
     void saveMenu(SaveMenuRequest addMenuRequest) throws BusinessException;
 

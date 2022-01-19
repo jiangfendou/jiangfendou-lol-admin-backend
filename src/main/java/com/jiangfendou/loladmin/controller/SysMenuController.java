@@ -42,8 +42,8 @@ public class SysMenuController extends BaseController {
     }
 
     @GetMapping("/list")
-    public ApiResponse<List<SearchMenusResponse>> searchMenus() throws BusinessException {
-        return ApiResponse.success(sysMenuService.searchMenus());
+    public ApiResponse<List<SearchMenusResponse>> searchMenus(Integer status) throws BusinessException {
+        return ApiResponse.success(sysMenuService.searchMenus(status));
     }
 
     @GetMapping("/detail")
@@ -58,13 +58,15 @@ public class SysMenuController extends BaseController {
     }
 
     @DeleteMapping("/delete")
-    public ApiResponse<Object> deleteMenu(@RequestBody @Validated DeleteMenuRequest deleteMenuRequest) throws BusinessException {
+    public ApiResponse<Object> deleteMenu(@RequestBody @Validated DeleteMenuRequest deleteMenuRequest)
+        throws BusinessException {
         sysMenuService.deleteMenu(deleteMenuRequest);
         return ApiResponse.success();
     }
 
     @PostMapping("/save")
-    public ApiResponse<Object> saveMenu(@RequestBody @Validated SaveMenuRequest saveMenuRequest) {
+    public ApiResponse<Object> saveMenu(@RequestBody @Validated SaveMenuRequest saveMenuRequest)
+        throws BusinessException {
         sysMenuService.saveMenu(saveMenuRequest);
         return ApiResponse.success();
     }

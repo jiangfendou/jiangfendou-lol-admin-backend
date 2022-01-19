@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,9 +129,14 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public List<SearchMenusResponse> searchMenus() throws BusinessException {
-        List<SysMenu> sysMenus = this.list(new QueryWrapper<SysMenu>().orderByAsc("order_num")
-            .eq("is_deleted", DeletedEnum.NOT_DELETED.getValue()));
+    public List<SearchMenusResponse> searchMenus(Integer status) throws BusinessException {
+        QueryWrapper<SysMenu> sysMenuQueryWrapper = new QueryWrapper<>();
+        sysMenuQueryWrapper.orderByAsc("order_num");
+        sysMenuQueryWrapper.eq("is_deleted", DeletedEnum.NOT_DELETED.getValue());
+        if (ObjectUtils.isNotEmpty(status)) {
+            sysMenuQueryWrapper.eq("status", status);
+        }
+        List<SysMenu> sysMenus = this.list(sysMenuQueryWrapper);
         if (sysMenus.isEmpty()) {
             log.info("menu list is empty");
             throw new BusinessException(HttpStatus.NOT_FOUND,

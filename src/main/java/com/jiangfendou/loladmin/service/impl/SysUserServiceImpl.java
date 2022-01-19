@@ -149,8 +149,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             sysUserRoles.stream().map(SysUserRole::getUserId).collect(Collectors.toList()).stream().distinct().collect(
                 Collectors.toList());
         userIds.forEach(sysUserRole -> {
-            redisUtil.del(GRANTED_AUTHORITY + userIds);
-            redisUtil.del(USER_MENU + userIds);
+            redisUtil.del(GRANTED_AUTHORITY + sysUserRole);
+            redisUtil.del(USER_MENU + sysUserRole);
         });
     }
 
